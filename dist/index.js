@@ -23,7 +23,7 @@ io.on("connection", (socket) => {
         io.emit("chat message", msg);
     });
 });
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4100;
 server.listen(PORT, () => {
     console.log(`Le serveur est sur le port ${PORT}`);
 });
