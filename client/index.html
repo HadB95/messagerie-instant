@@ -3,30 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Messagerie Instantanée</title>
+    <title>Messagerie Instantanée Privée</title>
   </head>
   <body>
+    <h1>Bienvenue, <span id="username"></span></h1>
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Envoyez</button>
+      <input
+        id="receiver"
+        placeholder="Nom d'utilisateur destinataire"
+        autocomplete="off"
+        required
+      />
+      <input
+        id="input"
+        autocomplete="off"
+        placeholder="Votre message"
+        required
+      />
+      <button>Envoyez</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
       const form = document.getElementById("form");
       const input = document.getElementById("input");
+      const receiverInput = document.getElementById("receiver");
+      const username = "johndoe"; // doit ici aussi être défini de dynamiquement après authentification
+      document.getElementById("username").textContent = username;
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        if (input.value) {
-          socket.emit("chat message", input.value);
+        if (input.value && receiverInput.value) {
+          socket.emit("message privé", {
+            content: input.value,
+            to: receiverInput.value,
+            from: username,
+          });
           input.value = "";
         }
       });
 
-      socket.on("chat message", function (msg) {
+      socket.on("message privé", function (msg) {
         const item = document.createElement("li");
-        item.textContent = msg;
+        item.textContent = `${msg.from}: ${msg.content}`;
         document.getElementById("messages").appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });

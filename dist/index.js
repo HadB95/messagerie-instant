@@ -14,16 +14,31 @@ app.use(express_1.default.static("client"));
 app.get("/", (req, res) => {
     res.send("Le serveur de messagerie instantanée fonctionne");
 });
+const userSockets = {};
 io.on("connection", (socket) => {
     console.log("utilisateur connecté");
+    // Associer le socket au username
+    const username = "johndoe"; //doit être obtenue au moment de l'authentification de l'utilisateur
+    userSockets[username] = socket;
     socket.on("déconnecté", () => {
         console.log("utilisateur déconnecté");
+        delete userSockets[username];
     });
-    socket.on("chat message", (msg) => {
-        io.emit("chat message", msg);
+    socket.on("private message", (msg) => {
+        const receiverSocket = userSockets[msg.to];
+        if (receiverSocket) {
+            receiverSocket.emit("private message", {
+                content: msg.content,
+                from: msg.from,
+            });
+        }
     });
 });
-const PORT = process.env.PORT || 4100;
+//   socket.on("chat message", (msg) => {
+//     io.emit("chat message", msg);
+//   });
+// });
+const PORT = process.env.PORT || 4200;
 server.listen(PORT, () => {
     console.log(`Le serveur est sur le port ${PORT}`);
 });
