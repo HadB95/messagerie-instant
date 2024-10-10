@@ -20,8 +20,8 @@ io.on("connection", (socket: Socket) => {
     console.log("utilisateur déconnecté");
   });
 
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
+  socket.on("chat message", (messageData) => {
+    io.emit("chat message", messageData);
   });
 });
 

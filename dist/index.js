@@ -1,29 +1,26 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const http_1 = require("http");
-const socket_io_1 = require("socket.io");
-const app = (0, express_1.default)();
-const server = (0, http_1.createServer)(app);
-const io = new socket_io_1.Server(server);
+var express_1 = require("express");
+var http_1 = require("http");
+var socket_io_1 = require("socket.io");
+var app = (0, express_1.default)();
+var server = (0, http_1.createServer)(app);
+var io = new socket_io_1.Server(server);
 // Serve les fichiers statiques depuis le dossier "client"
 app.use(express_1.default.static("client"));
-app.get("/", (req, res) => {
-    res.send("Le serveur de messagerie instantanée fonctionne");
+app.get("/", function (req, res) {
+  res.send("Le serveur de messagerie instantanée fonctionne");
 });
-io.on("connection", (socket) => {
-    console.log("utilisateur connecté");
-    socket.on("déconnecté", () => {
-        console.log("utilisateur déconnecté");
-    });
-    socket.on("chat message", (msg) => {
-        io.emit("chat message", msg);
-    });
+io.on("connection", function (socket) {
+  console.log("utilisateur connecté");
+  socket.on("déconnecté", function () {
+    console.log("utilisateur déconnecté");
+  });
+  socket.on("chat message", function (messageData) {
+    io.emit("chat message", messageData);
+  });
 });
-const PORT = process.env.PORT || 4100;
-server.listen(PORT, () => {
-    console.log(`Le serveur est sur le port ${PORT}`);
+var PORT = process.env.PORT || 4100;
+server.listen(PORT, function () {
+  console.log("Le serveur est sur le port ".concat(PORT));
 });
